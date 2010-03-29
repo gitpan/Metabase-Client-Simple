@@ -1,62 +1,25 @@
+# 
+# This file is part of Metabase-Client-Simple
+# 
+# This software is Copyright (c) 2010 by David Golden.
+# 
+# This is free software, licensed under:
+# 
+#   The Apache License, Version 2.0, January 2004
+# 
 use 5.006;
 use strict;
 use warnings;
 
 package Metabase::Client::Simple;
-
-our $VERSION = '0.005';
+our $VERSION = '0.006';
+# ABSTRACT: a client that submits to Metabase servers
 
 use HTTP::Status qw/:constants/; 
 use HTTP::Request::Common ();
-use JSON;
+use JSON 2 ();
 use LWP::UserAgent;
 use URI;
-
-=head1 NAME
-
-Metabase::Client::Simple - a client that submits to Metabase servers
-
-=head1 SYNOPSIS
-
-  use Metabase::Client::Simple;
-  use Metabase::User::Profile;
-  use Metabase::User::Secret;
-
-  my $profile = Metabase::User::Profile->load('user.profile.json');
-  my $secret  = Metabase::User::Secret ->load('user.secret.json' );
-
-  my $client = Metabase::Client::Simple->new({
-    profile => $profile,
-    secret  => $secret,
-    uri     => 'http://metabase.example.com/',
-  });
-
-  my $fact = generate_metabase_fact;
-
-  $client->submit_fact($fact);
-
-=head1 DESCRIPTION
-
-Metabase::Client::Simple provides is extremely simple, lightweight library for
-submitting facts to a L<Metabase|Metabase> web server.
-
-=head1 METHODS
-
-=cut
-
-=head2 new
-
-  my $client = Metabase::Client::Simple->new(\%arg)
-
-This is the object constructor.
-
-Valid arguments are:
-
-  profile - a Metabase::User::Profile object
-  secret  - a Metabase::User::Secret object
-  uri     - the root URI for the metabase server
-
-=cut
 
 my @valid_args;
 BEGIN {
@@ -67,6 +30,7 @@ BEGIN {
     *$arg = sub { $_[0]->{$arg}; }
   }
 }
+
 
 sub new {
   my ($class, @args) = @_;
@@ -88,15 +52,6 @@ sub new {
   return $self;
 }
 
-=head2 submit_fact
-
-  $client->submit_fact($fact);
-
-This method will submit a L<Metabase::Fact|Metabase::Fact> object to the
-client's server.  On success, it will return a true value.  On failure, it will
-raise an exception.
-
-=cut
 
 sub submit_fact {
   my ($self, $fact) = @_;
@@ -112,7 +67,7 @@ sub submit_fact {
     $req_uri,
     Content_Type => 'application/json',
     Accept       => 'application/json',
-    Content      => JSON->new->encode($fact->as_struct),
+    Content      => JSON->new->ascii->encode($fact->as_struct),
   );
   $req->authorization_basic($self->profile->resource->guid, $self->secret->content);
 
@@ -136,15 +91,6 @@ sub submit_fact {
   return 1;
 }
 
-=head2 guid_exists
-
-  $client->guid_exists('2f8519c6-24cf-11df-90b1-0018f34ec37c');
-
-This method will check whether the given GUID is found on the metabase server.
-The GUID must be in lower-case, string form.  It will return true or false.
-Note that a server error will also result in a false value.
-
-=cut
 
 sub guid_exists {
   my ($self, $guid) = @_;
@@ -160,16 +106,6 @@ sub guid_exists {
   return $res->is_success ? 1 : 0;
 }
 
-=head2 register
-
-  $client->register;
-
-This method will submit the user credentials to the metabase server.  It will
-be called automatically by C<submit_fact> if necessary.   You generally won't
-need to use it.  On success, it will return a true value.  On failure, it will
-raise an exception.
-
-=cut
 
 sub register {
   my ($self) = @_;
@@ -185,7 +121,7 @@ sub register {
     $req_uri,
     Content_Type => 'application/json',
     Accept       => 'application/json',
-    Content      => JSON->new->encode([
+    Content      => JSON->new->ascii->encode([
       $self->profile->as_struct, $self->secret->as_struct
     ]),
   );
@@ -247,20 +183,109 @@ sub _error {
   my ($self, $res, $prefix) = @_;
   $prefix ||= "unrecognized error";
   if ( ref($res) && $res->header('Content-Type') eq 'application/json') {
-    my $entity = JSON->new->decode($res->content);
+    my $entity = JSON->new->ascii->decode($res->content);
     return "$prefix\: $entity->{error}";
   } else {
     return "$prefix\: " . $res->message;
   }
 }
 
-=head1 LICENSE
+1;
 
-Portions Copyright (C) 2008 by Ricardo SIGNES
-Portions Copyright (C) 2009-2010 by David Golden
 
-This is free software, available under the same terms as perl itself.
+
+=pod
+
+=head1 NAME
+
+Metabase::Client::Simple - a client that submits to Metabase servers
+
+=head1 VERSION
+
+version 0.006
+
+=head1 SYNOPSIS
+
+  use Metabase::Client::Simple;
+  use Metabase::User::Profile;
+  use Metabase::User::Secret;
+
+  my $profile = Metabase::User::Profile->load('user.profile.json');
+  my $secret  = Metabase::User::Secret ->load('user.secret.json' );
+
+  my $client = Metabase::Client::Simple->new({
+    profile => $profile,
+    secret  => $secret,
+    uri     => 'http://metabase.example.com/',
+  });
+
+  my $fact = generate_metabase_fact;
+
+  $client->submit_fact($fact);
+
+=head1 DESCRIPTION
+
+Metabase::Client::Simple provides is extremely simple, lightweight library for
+submitting facts to a L<Metabase|Metabase> web server.
+
+=head1 METHODS
+
+=head2 new
+
+  my $client = Metabase::Client::Simple->new(\%arg)
+
+This is the object constructor.
+
+Valid arguments are:
+
+  profile - a Metabase::User::Profile object
+  secret  - a Metabase::User::Secret object
+  uri     - the root URI for the metabase server
+
+=head2 submit_fact
+
+  $client->submit_fact($fact);
+
+This method will submit a L<Metabase::Fact|Metabase::Fact> object to the
+client's server.  On success, it will return a true value.  On failure, it will
+raise an exception.
+
+=head2 guid_exists
+
+  $client->guid_exists('2f8519c6-24cf-11df-90b1-0018f34ec37c');
+
+This method will check whether the given GUID is found on the metabase server.
+The GUID must be in lower-case, string form.  It will return true or false.
+Note that a server error will also result in a false value.
+
+=head2 register
+
+  $client->register;
+
+This method will submit the user credentials to the metabase server.  It will
+be called automatically by C<submit_fact> if necessary.   You generally won't
+need to use it.  On success, it will return a true value.  On failure, it will
+raise an exception.
+
+=for Pod::Coverage profile secret uri
+
+=head1 AUTHORS
+
+  David Golden <dagolden@cpan.org>
+  Ricardo Signes <rjbs@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2010 by David Golden.
+
+This is free software, licensed under:
+
+  The Apache License, Version 2.0, January 2004
 
 =cut
 
-1;
+
+__END__
+
+
+

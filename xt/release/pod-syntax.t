@@ -8,7 +8,9 @@
 # 
 #   The Apache License, Version 2.0, January 2004
 # 
-use strict;
-use warnings;
-use Test::More tests => 1;
-use_ok('Metabase::Client::Simple');
+use Test::More;
+
+eval "use Test::Pod 1.00";
+plan skip_all => "Test::Pod 1.00 required for testing POD" if $@;
+
+all_pod_files_ok();

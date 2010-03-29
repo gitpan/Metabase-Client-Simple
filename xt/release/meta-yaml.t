@@ -8,7 +8,9 @@
 # 
 #   The Apache License, Version 2.0, January 2004
 # 
-use strict;
-use warnings;
-use Test::More tests => 1;
-use_ok('Metabase::Client::Simple');
+
+use Test::More;
+
+eval "use Test::CPAN::Meta";
+plan skip_all => "Test::CPAN::Meta required for testing META.yml" if $@;
+meta_yaml_ok();
