@@ -1,6 +1,7 @@
 Changes
 LICENSE
 MANIFEST
+META.json
 META.yml
 Makefile.PL
 README
@@ -8,6 +9,7 @@ dist.ini
 lib/Metabase/Client/Simple.pm
 t/00-compile.t
 t/compile.t
-xt/release/meta-yaml.t
+xt/release/distmeta.t
 xt/release/pod-coverage.t
 xt/release/pod-syntax.t
+xt/release/portability.t

@@ -12,7 +12,9 @@ use strict;
 use warnings;
 
 package Metabase::Client::Simple;
-our $VERSION = '0.006';
+BEGIN {
+  $Metabase::Client::Simple::VERSION = '0.007';
+}
 # ABSTRACT: a client that submits to Metabase servers
 
 use HTTP::Status qw/:constants/; 
@@ -39,6 +41,9 @@ sub new {
     \@args,
     { map { $_ => 1 } @valid_args }
   );
+
+  # uri must have a trailing slash
+  $args->{uri} .= "/" unless substr($args->{uri}, -1) eq '/';
 
   my $self = bless $args => $class;
 
@@ -202,7 +207,7 @@ Metabase::Client::Simple - a client that submits to Metabase servers
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 

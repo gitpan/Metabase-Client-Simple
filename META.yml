@@ -3,10 +3,14 @@ abstract: 'a client that submits to Metabase servers'
 author:
   - 'David Golden <dagolden@cpan.org>'
   - 'Ricardo Signes <rjbs@cpan.org>'
-build_requires: {}
+build_requires:
+  File::Find: 0
+  File::Temp: 0
+  Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.11
-generated_by: 'Dist::Zilla version 1.100711'
+  ExtUtils::MakeMaker: 6.31
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.101831, CPAN::Meta::Converter version 2.101670'
 license: apache
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,18 +21,18 @@ no_index:
     - t
     - xt
     - examples
+    - corpus
 provides:
   Metabase::Client::Simple:
     file: lib/Metabase/Client/Simple.pm
-    version: 0.006
+    version: 0.007
 requires:
-  HTTP::Request::Common: 5
-  HTTP::Status: 5
+  HTTP::Request::Common: 0
+  HTTP::Status: 0
   JSON: 2
-  LWP::UserAgent: 5
-  Net::SSL: 0
-  Test::More: 0.88
-  URI: 1
+  LWP::UserAgent: 0
+  URI: 0
+  perl: 5.006
 resources:
-  repository: http://github.com/dagolden/metabase-client-simple
-version: 0.006
+  repository: git://ec2.dagolden.com/metabase-client-simple.git
+version: 0.007

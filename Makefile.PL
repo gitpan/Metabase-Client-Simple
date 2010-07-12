@@ -2,41 +2,56 @@
 use strict;
 use warnings;
 
+BEGIN { require 5.006; }
 
-
-use ExtUtils::MakeMaker 6.11;
+use ExtUtils::MakeMaker 6.31;
 
 
 
 my %WriteMakefileArgs = (
-                       'test' => {
-                                   'TESTS' => 't/*.t'
-                                 },
-                       'NAME' => 'Metabase::Client::Simple',
-                       'DISTNAME' => 'Metabase-Client-Simple',
-                       'CONFIGURE_REQUIRES' => {
-                                                 'ExtUtils::MakeMaker' => '6.11'
-                                               },
-                       'AUTHOR' => 'David Golden <dagolden@cpan.org>, Ricardo Signes <rjbs@cpan.org>',
-                       'BUILD_REQUIRES' => {},
-                       'ABSTRACT' => 'a client that submits to Metabase servers',
-                       'EXE_FILES' => [],
-                       'VERSION' => '0.006',
-                       'PREREQ_PM' => {
-                                        'Test::More' => '0.88',
-                                        'URI' => '1',
-                                        'LWP::UserAgent' => '5',
-                                        'Net::SSL' => '0',
-                                        'JSON' => '2',
-                                        'HTTP::Status' => '5',
-                                        'HTTP::Request::Common' => '5'
-                                      },
-                       'LICENSE' => 'apache'
-                     );
+  'ABSTRACT' => 'a client that submits to Metabase servers',
+  'AUTHOR' => 'David Golden <dagolden@cpan.org>, Ricardo Signes <rjbs@cpan.org>',
+  'BUILD_REQUIRES' => {
+    'File::Find' => '0',
+    'File::Temp' => '0',
+    'Test::More' => '0'
+  },
+  'CONFIGURE_REQUIRES' => {
+    'ExtUtils::MakeMaker' => '6.31'
+  },
+  'DISTNAME' => 'Metabase-Client-Simple',
+  'EXE_FILES' => [],
+  'LICENSE' => 'apache',
+  'NAME' => 'Metabase::Client::Simple',
+  'PREREQ_PM' => {
+    'HTTP::Request::Common' => '0',
+    'HTTP::Status' => '0',
+    'JSON' => '2',
+    'LWP::UserAgent' => '0',
+    'URI' => '0'
+  },
+  'VERSION' => '0.007',
+  'test' => {
+    'TESTS' => 't/*.t'
+  }
+);
 
 
-delete $WriteMakefileArgs{LICENSE}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.31) };
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
 
 WriteMakefile(%WriteMakefileArgs);
 

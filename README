@@ -2,7 +2,7 @@ NAME
     Metabase::Client::Simple - a client that submits to Metabase servers
 
 VERSION
-    version 0.006
+    version 0.007
 
 SYNOPSIS
       use Metabase::Client::Simple;
