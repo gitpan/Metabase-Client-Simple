@@ -13,8 +13,11 @@ my %WriteMakefileArgs = (
   'AUTHOR' => 'David Golden <dagolden@cpan.org>, Ricardo Signes <rjbs@cpan.org>',
   'BUILD_REQUIRES' => {
     'File::Find' => '0',
+    'File::Spec' => '0',
     'File::Temp' => '0',
-    'Test::More' => '0'
+    'Metabase::User::Profile' => '0',
+    'Metabase::User::Secret' => '0',
+    'Test::More' => '0.88'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.31'
@@ -27,10 +30,10 @@ my %WriteMakefileArgs = (
     'HTTP::Request::Common' => '0',
     'HTTP::Status' => '0',
     'JSON' => '2',
-    'LWP::UserAgent' => '0',
+    'LWP::UserAgent' => '5.54',
     'URI' => '0'
   },
-  'VERSION' => '0.007',
+  'VERSION' => '0.008',
   'test' => {
     'TESTS' => 't/*.t'
   }

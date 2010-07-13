@@ -33,7 +33,7 @@
             "HTTP::Request::Common" : 0,
             "HTTP::Status" : 0,
             "JSON" : "2",
-            "LWP::UserAgent" : 0,
+            "LWP::UserAgent" : "5.54",
             "URI" : 0,
             "perl" : "5.006"
          }
@@ -41,15 +41,18 @@
       "test" : {
          "requires" : {
             "File::Find" : 0,
+            "File::Spec" : 0,
             "File::Temp" : 0,
-            "Test::More" : 0
+            "Metabase::User::Profile" : 0,
+            "Metabase::User::Secret" : 0,
+            "Test::More" : "0.88"
          }
       }
    },
    "provides" : {
       "Metabase::Client::Simple" : {
          "file" : "lib/Metabase/Client/Simple.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       }
    },
    "release_status" : "stable",
@@ -59,6 +62,6 @@
          "url" : "git://ec2.dagolden.com/metabase-client-simple.git"
       }
    },
-   "version" : "0.007"
+   "version" : "0.008"
 }
 

@@ -2,7 +2,7 @@ NAME
     Metabase::Client::Simple - a client that submits to Metabase servers
 
 VERSION
-    version 0.007
+    version 0.008
 
 SYNOPSIS
       use Metabase::Client::Simple;
@@ -37,6 +37,9 @@ METHODS
       profile - a Metabase::User::Profile object
       secret  - a Metabase::User::Secret object
       uri     - the root URI for the metabase server
+
+    If you use a "uri" argument with the 'https' scheme, you must have
+    Crypt::SSLeay or IO::Socket::SSL installed.
 
   submit_fact
       $client->submit_fact($fact);

@@ -13,14 +13,14 @@ use warnings;
 
 package Metabase::Client::Simple;
 BEGIN {
-  $Metabase::Client::Simple::VERSION = '0.007';
+  $Metabase::Client::Simple::VERSION = '0.008';
 }
 # ABSTRACT: a client that submits to Metabase servers
 
-use HTTP::Status qw/:constants/; 
+use HTTP::Status qw/:constants/;
 use HTTP::Request::Common ();
 use JSON 2 ();
-use LWP::UserAgent;
+use LWP::UserAgent 5.54 (); # keep_alive
 use URI;
 
 my @valid_args;
@@ -54,7 +54,28 @@ sub new {
     Carp::confess( "'profile' argument for $class must be a Metabase::User::secret" );
   }
 
+  my $scheme = URI->new( $self->uri )->scheme;
+  unless ( $self->_ua->is_protocol_supported( $scheme ) ) {
+    my $msg = "Scheme '$scheme' is not supported by your LWP::UserAgent.\n";
+    if ( $scheme eq 'https' ) {
+      $msg .= "You must install Crypt::SSLeay or IO::Socket::SSL or use http instead.\n";
+    }
+    die $msg;
+  }
+
   return $self;
+}
+
+sub _ua {
+  my ($self) = @_;
+  if ( ! $self->{_ua} ) {
+    $self->{_ua} = LWP::UserAgent->new(
+      agent => __PACKAGE__ . "/" . __PACKAGE__->VERSION . " ",
+      env_proxy => 1,
+      keep_alive => 5,
+    );
+  }
+  return $self->{_ua};
 }
 
 
@@ -76,7 +97,7 @@ sub submit_fact {
   );
   $req->authorization_basic($self->profile->resource->guid, $self->secret->content);
 
-  my $res = $self->_http_request($req);
+  my $res = $self->_ua->request($req);
 
   if ($res->code == HTTP_UNAUTHORIZED) {
     if ( $self->guid_exists( $self->profile->guid ) ) {
@@ -84,7 +105,7 @@ sub submit_fact {
     }
     $self->register; # dies on failure
     # should now be registered so try again
-    $res = $self->_http_request($req);
+    $res = $self->_ua->request($req);
   }
 
   unless ( $res->is_success ) {
@@ -106,7 +127,7 @@ sub guid_exists {
 
   my $req = HTTP::Request::Common::HEAD( $req_uri );
 
-  my $res = $self->_http_request($req);
+  my $res = $self->_ua->request($req);
 
   return $res->is_success ? 1 : 0;
 }
@@ -118,7 +139,7 @@ sub register {
   my $req_uri = $self->_abs_uri('register');
 
   for my $type ( qw/profile secret/ ) {
-    $self->$type->set_creator( $self->$type->resource) 
+    $self->$type->set_creator( $self->$type->resource)
       unless $self->$type->creator;
   }
 
@@ -131,7 +152,7 @@ sub register {
     ]),
   );
 
-  my $res = $self->_http_request($req);
+  my $res = $self->_ua->request($req);
 
   unless ($res->is_success) {
     Carp::confess $self->_error( $res => "registration failed" );
@@ -170,15 +191,6 @@ sub __validate_args {
   return $hash;
 }
 
-sub _http_request {
-  my ($self, $request) = @_;
-
-  # Blah blah blah, it would be nice to cache this and maybe do some of that
-  # keepalive stuff that the cool kids are all talking about.
-  # -- rjbs, 2009-03-30
-  LWP::UserAgent->new->request($request);
-}
-
 sub _abs_uri {
   my ($self, $str) = @_;
   my $req_uri = URI->new($str)->abs($self->uri);
@@ -207,7 +219,7 @@ Metabase::Client::Simple - a client that submits to Metabase servers
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -246,6 +258,9 @@ Valid arguments are:
   profile - a Metabase::User::Profile object
   secret  - a Metabase::User::Secret object
   uri     - the root URI for the metabase server
+
+If you use a C<uri> argument with the 'https' scheme, you must have
+Crypt::SSLeay or IO::Socket::SSL installed.
 
 =head2 submit_fact
 
