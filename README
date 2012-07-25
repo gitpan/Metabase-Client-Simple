@@ -2,7 +2,7 @@ NAME
     Metabase::Client::Simple - a client that submits to Metabase servers
 
 VERSION
-    version 0.008
+    version 0.009
 
 SYNOPSIS
       use Metabase::Client::Simple;
@@ -39,7 +39,7 @@ METHODS
       uri     - the root URI for the metabase server
 
     If you use a "uri" argument with the 'https' scheme, you must have
-    Crypt::SSLeay or IO::Socket::SSL installed.
+    LWP::Protocol::https installed.
 
   submit_fact
       $client->submit_fact($fact);
@@ -63,12 +63,27 @@ METHODS
     generally won't need to use it. On success, it will return a true value.
     On failure, it will raise an exception.
 
+SUPPORT
+  Bugs / Feature Requests
+    Please report any bugs or feature requests through the issue tracker at
+    <http://rt.cpan.org/Public/Dist/Display.html?Name=Metabase-Client-Simple
+    >. You will be notified automatically of any progress on your issue.
+
+  Source Code
+    This is open source software. The code repository is available for
+    public review and contribution under the terms of the license.
+
+    <https://github.com/dagolden/metabase-client-simple>
+
+      git clone https://github.com/dagolden/metabase-client-simple.git
+
 AUTHORS
-      David Golden <dagolden@cpan.org>
-      Ricardo Signes <rjbs@cpan.org>
+    *   David Golden <dagolden@cpan.org>
+
+    *   Ricardo Signes <rjbs@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is Copyright (c) 2010 by David Golden.
+    This software is Copyright (c) 2012 by David Golden.
 
     This is free software, licensed under:
 

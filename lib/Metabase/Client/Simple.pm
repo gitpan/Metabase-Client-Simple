@@ -1,21 +1,10 @@
-# 
-# This file is part of Metabase-Client-Simple
-# 
-# This software is Copyright (c) 2010 by David Golden.
-# 
-# This is free software, licensed under:
-# 
-#   The Apache License, Version 2.0, January 2004
-# 
 use 5.006;
 use strict;
 use warnings;
 
 package Metabase::Client::Simple;
-BEGIN {
-  $Metabase::Client::Simple::VERSION = '0.008';
-}
 # ABSTRACT: a client that submits to Metabase servers
+our $VERSION = '0.009'; # VERSION
 
 use HTTP::Status qw/:constants/;
 use HTTP::Request::Common ();
@@ -219,7 +208,7 @@ Metabase::Client::Simple - a client that submits to Metabase servers
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -260,7 +249,7 @@ Valid arguments are:
   uri     - the root URI for the metabase server
 
 If you use a C<uri> argument with the 'https' scheme, you must have
-Crypt::SSLeay or IO::Socket::SSL installed.
+L<LWP::Protocol::https> installed.
 
 =head2 submit_fact
 
@@ -289,14 +278,42 @@ raise an exception.
 
 =for Pod::Coverage profile secret uri
 
+=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+
+=head1 SUPPORT
+
+=head2 Bugs / Feature Requests
+
+Please report any bugs or feature requests through the issue tracker
+at L<http://rt.cpan.org/Public/Dist/Display.html?Name=Metabase-Client-Simple>.
+You will be notified automatically of any progress on your issue.
+
+=head2 Source Code
+
+This is open source software.  The code repository is available for
+public review and contribution under the terms of the license.
+
+L<https://github.com/dagolden/metabase-client-simple>
+
+  git clone https://github.com/dagolden/metabase-client-simple.git
+
 =head1 AUTHORS
 
-  David Golden <dagolden@cpan.org>
-  Ricardo Signes <rjbs@cpan.org>
+=over 4
+
+=item *
+
+David Golden <dagolden@cpan.org>
+
+=item *
+
+Ricardo Signes <rjbs@cpan.org>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2010 by David Golden.
+This software is Copyright (c) 2012 by David Golden.
 
 This is free software, licensed under:
 
